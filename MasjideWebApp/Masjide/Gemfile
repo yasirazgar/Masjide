@@ -1,0 +1,138 @@
+source 'https://rubygems.org'
+ruby '2.0.0'
+
+gem 'rails', '3.2.16'
+gem 'mysql2', '0.3.11'
+gem 'acts_as_list'
+gem 'formtastic'                    # Semantic form builder
+gem 'jbuilder'                      # To use Jbuilder templates for JSON
+# gem 'jquery-rails'                  # Embed jQuery  - turning off for now and manually including
+gem 'i18n'                          # Locale manager
+gem 'nokogiri', '1.4.7'             # HTML/XML parsing library, preferred over Hpricot
+gem 'pdf-reader', '0.9.0'           # Need to force this version for prawn (below)
+gem 'prawn', '~> 1.2.1'             # PDF generator
+gem 'will_paginate', '3.0.4', :require => ['will_paginate', 'will_paginate/array'] # Pagination for Rails 3
+gem 'rmagick', '2.13.2'             # Image processing
+gem 'paperclip', '4.1.0'
+gem 'aws-sdk', '1.5.8'
+gem 'aws-s3'
+gem 'strong_parameters', '0.2.1'    # borrowing from Rails 4
+gem 'draper', '1.3.0'            # presentation decorator for models
+gem 'render_anywhere', :require => false    # allow rendering in any class https://github.com/yappbox/render_anywhere
+gem 'rdiscount'
+gem 'delayed_job_active_record', '4.0.1'
+gem 'daemons', '1.0.10'             # for use with delayed job
+# gem 'spreadsheet', '~> 0.9.7'       # spreadsheet read/write
+gem 'axlsx', '~> 2.0.1'             # excel generation only
+gem 'axlsx_rails'                   # rails helper
+# gem 'acts_as_xlsx', '~> 1.0.6'      # rails helper
+gem 'mojinizer', '~> 0.2.2'           # converter from kana to romaji. methods to use are .romaji, .hiragana, .katakana, .hira_to_kata, .zen_to_han
+
+# Browser detection
+# also looked at these:
+# https://github.com/toolmantim/user_agent_parser - heavy, haven't tried
+# gem 'user_agent_parser', '~> 2.1.1'
+# https://github.com/josh/useragent - didn't detect Android - returned 'Linux instead'
+# gem 'useragent', '~> 0.10.0'
+gem 'browser', '0.5.0'           # browser agent detection, https://github.com/fnando/browser
+
+# gem 'premailer-rails'              # can't use this with Zurb Ink - it strips out too much
+
+# Mail
+gem 'sendgrid', '1.0.1'             # For adding extra mail headers to turn on sendgrid features
+
+# Authentication, authorization, and roles
+gem 'bcrypt-ruby', '3.0.1'       # To use ActiveModel has_secure_password
+gem 'cancan'                        # Authorization, can remove, not being used. When you remove this, also delete ability.rb.
+gem 'rolify', '3.2.0'               # Roles management
+
+# IMPORTANT NOTE: there is a 3.1.1 monkey patch for Devise::ParameterSanitizer in vendor/patches/devise.
+# When you upgrade the gem, remove the patch.
+gem 'devise', '3.1.1'               # Authentication
+
+# gem 'capistrano' # Deploy with Capistrano
+# gem 'debugger' # To use debugger
+
+gem 'foundation-rails', '5.0.2.0'   # css and js responsive framework; need this outside of the assets group
+
+# better debug print than 'ce': https://github.com/michaeldv/awesome_print
+gem 'awesome_print', '1.2.0', :group => [:development, :test]
+
+group :development do
+  gem 'heroku_san'                              # Heroku deployments: https://github.com/fastestforward/heroku_san
+  gem 'brakeman', '2.3.1', :require => false # Rails security scanner
+  gem 'bullet'                                  # Rails best practice code quality checker: https://github.com/flyerhzm/bullet
+
+  # FOR LIVERELOAD
+  gem 'guard', '2.2.5',                 :require => false
+  gem 'guard-livereload', '2.1.0',      :require => false
+  gem 'rack-livereload', '0.3.15'
+  gem 'rb-fsevent', '0.9.3',            :require => false
+end
+
+group :test do
+  gem 'mini_backtrace', '0.1.3'               # Required for backtrace silencer in tests
+  gem 'webmock', '1.7.4', :require => false   # Tentative, might not use
+
+  # these combinations work with ruby 2.0:
+  #   mocha 0.13.3 + minitest 3.2.0
+  # mocha breaks with rails 3.2.15 / ruby 2.0 and minitest >=3.3.0, even with mocha 0.14.0
+  # i tried every combination of mocha and minitest above these versions and got mocha failures (expected # of invocations failures)
+  gem 'mocha', '0.13.3', :require => false    # Mocking library for tests.
+  gem 'minitest', '3.2.0'
+
+  #http://blogs.burnsidedigital.com/2013/01/setting-jenkins-ci-server-for-rails-project-on-a-vagrant-box/
+  gem 'ci_reporter', '1.9.0', :require => false   # JUnit compatible test loader hook for continuous integration.
+  # gem 'machinist', '>= 2.0.0.beta2'             # non-fixtures test object generation
+  gem 'simplecov', :require => false              # test coverage reports
+  gem 'simplecov-rcov', :require => false         # using a different report formatter
+end
+
+group :testing, :stable, :production do
+  # sets logging to stdout, serve static assets to true on production, following 12-factor rules: http://12factor.net/
+  # refer to: https://github.com/heroku/rails_12factor
+  # IMPORTANT! - all environments running on Heroku must have rails_12factor enabled, otherwise the Rails log will not print to
+  # stdout and you will see nothing in the heroku logs.
+  gem 'rails_12factor', '0.0.2'
+
+  gem 'newrelic_rpm', '3.7.1.182'
+  gem 'dalli'                                     # For heroku memcache
+  gem 'honeybadger', '1.13.0'
+end
+
+group :development, :test do
+  # gem 'rspec-rails', '~> 3.0.0.beta'
+  gem 'rspec'
+  # gem 'capybara'
+  # gem 'cucumber'
+  # gem 'cucumber-rails', require: false
+  # gem 'database_cleaner'
+  # gem 'poltergeist'
+  # gem 'selenium-webdriver'
+  # gem 'capybara-webkit'
+end
+
+group :production do
+  # turning on cookie encryption for production use
+  gem 'encrypted-cookie-store', '1.0'
+  gem 'scout_rails', '1.1.2'
+end
+
+# Gems used only for assets and not required in production environments by default.
+group :assets do
+  # gotta use older version of libv8 and therubyracer for gcc 4.2.1
+  gem 'libv8', '~> 3.3.10'
+  gem 'therubyracer', '~> 0.10.2'
+#   gem 'coffee-rails', '~> 3.2.1'
+  gem 'sass-rails', '3.2.6'
+  gem 'uglifier', '>= 1.0.3'        # minimizer
+  gem 'compass-rails'               # you need this or you get an err in foundation
+
+  # Rails 3 by default compiles once to generate fingerprinted assets,
+  # and once to generate non-fingerprinted assets (the fingerprinted ones have the MD5 hash in the filename).
+  # This gem speeds up your Rails 3 rake assets:precompile
+  # https://github.com/ndbroadbent/turbo-sprockets-rails3
+  gem 'turbo-sprockets-rails3', '0.3.11'
+end
+
+gem 'unicorn', '4.7.0', :group => [:testing, :stable, :production, :admin]
